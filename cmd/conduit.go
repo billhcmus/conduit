@@ -6,6 +6,8 @@ import (
 	"github.com/billhcmus/conduit/config"
 	"github.com/billhcmus/conduit/logger"
 	"github.com/billhcmus/conduit/server"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"log"
 	"os"
 	"os/signal"
@@ -14,6 +16,7 @@ import (
 
 func main() {
 	conf := config.ServerConfig{Addr: ":8086"}
+	logger.InitLogger(zapcore.InfoLevel)
 	s := server.New(conf, server.Option1(1))
 
 	v1 := s.Group("api/v1")
@@ -28,7 +31,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	s.Stop()
-	if err := logger.GetInstance().Sync(); err != nil {
+	if err := zap.L().Sync(); err != nil {
 		log.Fatalf("Failed to flush log %v", err)
 	}
 }

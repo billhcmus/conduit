@@ -1,5 +1,7 @@
 package server
 
+var _ Option = optionFunc(func(http *Http) {})
+
 type Option interface {
 	apply(h *Http)
 }
